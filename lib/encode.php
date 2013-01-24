@@ -1,13 +1,14 @@
 #!/usr/bin/php
 <?php
-$fp = fopen('php://stdin', 'rb');  
-if(!$fp) exit;  
-$stdin = '';  
-do {  
-    $line = fread($fp, 8192);  
-    if (strlen($line) == 0) break;  
-    $stdin .= $line . PHP_EOL;  
-} while(true);  
+$fp = fopen('php://stdin', 'rb');
+if (!$fp) {
+    exit(1);
+}
+$stdin = '';
+while (!feof($fp)) {
+    $stdin .= fread($fp, 8192);
+}
+$stdin .= PHP_EOL;
 fclose($fp);
 
 $data = base64_decode($stdin);

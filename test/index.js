@@ -1,7 +1,7 @@
 var encode = require('../index'),
 assert = require('assert'),
 fs = require('fs'),
-expect = 'あいうえおかきくけこ\n';
+expect = '\u3042\u3044\u3046\u3048\u304a\u304b\u304d\u304f\u3051\u3053\n';
 
 // EUC-JP to UTF-8
 fs.readFile(__dirname + '/euc.txt', function(err, buf) {
