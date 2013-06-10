@@ -14,6 +14,10 @@ function encode(buf, fromCharCode, toCharCode, callback) {
     }
     var chunks = [],
     size = 0,
+    inputFrom = 0, inputTo,
+    inputBufSize = 8192,
+    data = buf.toString('base64'),
+    inputDataLen = data.length,
     batch = require('child_process').spawn(
         __dirname + '/lib/encode.php',
         [
@@ -21,13 +25,12 @@ function encode(buf, fromCharCode, toCharCode, callback) {
             toCharCode
         ]
         );
-
-    batch.stdin.write(buf.toString('base64'));
-    batch.stdin.end();
-
-    batch.stdout.on('data', function(data) {
-        chunks.push(data);
-        size += data.length;
+    batch.stdout.on('readable', function() {
+        var data = batch.stdout.read();
+        if (data != null) {
+            chunks.push(data);
+            size += data.length;
+        }
     });
     batch.on('exit', function(code) {
         if (code === 0) {
@@ -36,6 +39,23 @@ function encode(buf, fromCharCode, toCharCode, callback) {
             callback(new Error('encode fail.'), null);
         }
     });
+    batch.stdin.on('drain', function() {
+        write();
+    });
+    function write() {
+        for (; inputFrom < inputDataLen; inputFrom = inputFrom + inputBufSize) {
+            inputTo = inputFrom + inputBufSize;
+            if (!batch.stdin.write(data.slice(inputFrom, inputTo))) {
+                return;
+            }
+        }
+        if (inputTo < inputDataLen) {
+            batch.stdin.end(data.slice(inputFrom, inputTo));
+        } else {
+            batch.stdin.end();
+        }
+    }
+    write();
 }
 
 /**

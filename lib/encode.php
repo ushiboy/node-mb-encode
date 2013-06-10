@@ -15,3 +15,4 @@ $data = base64_decode($stdin);
 $fromCharCode = $argv[1];
 $toCharCode = $argv[2];
 print mb_convert_encoding($data, $toCharCode, $fromCharCode);
+exit(0);

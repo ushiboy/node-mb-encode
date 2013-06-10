@@ -17,7 +17,6 @@ fs.readFile(__dirname + '/euc.txt', function(err, buf) {
         assert.equal(data.toString('utf8'), expect, 'eucjp to utf8');
     });
 });
-
 // SJIS to UTF-8
 fs.readFile(__dirname + '/sjis.txt', function(err, buf) {
     if (err) {
