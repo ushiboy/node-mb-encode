@@ -40,6 +40,8 @@ function encode(buf, fromCharCode, toCharCode, callback) {
         }
     });
     batch.stdin.on('drain', function() {
+        inputFrom = inputFrom + inputBufSize;
+        inputTo = inputFrom + inputBufSize;
         write();
     });
     function write() {
